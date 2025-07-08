@@ -16,12 +16,12 @@ fn main() {
     println!("Lexer initialized with input: {}", input);
     // println!("Current character: {:?}", lexer);
 
-    // for (idx,token) in lexer.input.iter().enumerate() {
-    //     println!("Token at index {}: {}", idx, token);
-    //     println!("Current character: {:?}", lexer);
-    // }
+    for (idx,token) in lexer.input.clone().into_iter().enumerate() {
+        println!("Token at index {}: {}", idx, token);
+        println!("Current character: {:?}", lexer.next_token());
+    }
 
-    println!(" last Current character: {:?}", lexer.next_token());
+    // println!(" last Current character: {:?}", lexer.next_token());
 
     
 }

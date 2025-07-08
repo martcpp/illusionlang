@@ -1,7 +1,7 @@
 use std::fmt::Display;
 
 #[allow(dead_code, unused_variables)]
-#[derive(Debug)]
+#[derive(Debug,PartialEq)]
 pub struct Token{
     pub kind: Tokenkind,
     pub literal: String,
@@ -15,7 +15,7 @@ impl Token {
 }
 
 #[allow(dead_code, unused_variables)]
-#[derive(Debug)]
+#[derive(Debug,PartialEq)]
 pub enum Tokenkind {
     Illegal,
     Eof,

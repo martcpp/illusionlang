@@ -96,5 +96,18 @@ mod test {
             Token { kind: Tokenkind::Semicolon, literal: String::from(";") },
             Token::new(Tokenkind::Eof, String::from("")), // Eof token
         ];
+        let mut lexer = Lexer::new(input);
+        let mut tokens = Vec::new();
+        while let token = lexer.next_token() {
+            if token.kind == Tokenkind::Eof {
+                break;
+            }
+            tokens.push(token);
+        }
+        assert_eq!(tokens.len(), expect_token.len());
+        for (i, token) in tokens.iter().enumerate() {
+            assert_eq!(token.kind, expect_token[i].kind);
+            assert_eq!(token.literal, expect_token[i].literal);
+        }
     }
 }
