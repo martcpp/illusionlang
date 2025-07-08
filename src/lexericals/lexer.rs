@@ -22,61 +22,38 @@ impl Lexer {
 
     pub fn read_token(&mut self){
         let current_pos = self.next;
-        if self.current >= self.input.len() {
+        if current_pos >= self.input.len() {
             self.ch = '\0'; // End of input
         }else{
-            self.ch = self.input[current_pos];
-            self.current = current_pos;
-            self.next += 1;
-
+            self.ch = self.input[current_pos];          
         }
+        self.current = current_pos;
+        self.next += 1;
     }
 
     pub fn next_token(&mut self) -> Token {
-        let mut tok = Token::new(Tokenkind::Illegal, String::new());
+            //"=+(){},;";
+        let token = match self.ch {
+            '=' => Token::new(Tokenkind::Assign, self.ch.to_string()),
+            '+' => Token::new(Tokenkind::Plus, self.ch.to_string()),
+            '-' => Token::new(Tokenkind::Minus, self.ch.to_string()),
+            ',' => Token::new(Tokenkind::Comma, self.ch.to_string()),
+            '(' => Token::new(Tokenkind::Lparen, self.ch.to_string()),
+            ')' => Token::new(Tokenkind::Rparen, self.ch.to_string()),
+            '}' => Token::new(Tokenkind::Rbrace, self.ch.to_string()),
+            '{' => Token::new(Tokenkind::Lbrace, self.ch.to_string()),
+            ';' => Token::new(Tokenkind::Semicolon, self.ch.to_string()),
+            '\0' => Token::new(Tokenkind::Eof, String::new()), // End of file token
 
-        match self.ch {
-            '=' => {
-                tok.kind = Tokenkind::Assign;
-                tok.literal = String::from("=");
-            },
-            '+' => {
-                tok.kind = Tokenkind::Plus;
-                tok.literal = String::from("+");
-            },
-            '(' => {
-                tok.kind = Tokenkind::Lparen;
-                tok.literal = String::from("(");
-            },
-            ')' => {
-                tok.kind = Tokenkind::Rparen;
-                tok.literal = String::from(")");
-            },
-            '{' => {
-                tok.kind = Tokenkind::Lbrace;
-                tok.literal = String::from("{");
-            },
-            '}' => {
-                tok.kind = Tokenkind::Rbrace;
-                tok.literal = String::from("}");
-            },
-            ';' => {
-                tok.kind = Tokenkind::Semicolon;
-                tok.literal = String::from(";");
-            },
-            _ => {
-                tok.kind = Tokenkind::Illegal;
-                tok.literal = self.ch.to_string();
-            }
-        }
+            _ => Token::new(Tokenkind::Illegal, self.ch.to_string()),
 
-        self.read_token();
-        if self.ch == '\0' {
-            return Token::new(Tokenkind::Eof, String::new());
-        }
+
         
-        tok
+        };
+        self.read_token(); // Move to the next character
+        token
     }
+  
     
 }
 
@@ -85,29 +62,25 @@ mod test {
     use super::*;
     #[test]
     fn read_token() {
-        let input ="=+(){};";
+        let input ="=+(){},;";
         let expect_token = vec![
-            Token { kind: Tokenkind::Assign, literal: String::from("=") },
-            Token { kind: Tokenkind::Plus, literal: String::from("+") },
-            Token { kind: Tokenkind::Lparen, literal: String::from("(") },
-            Token { kind: Tokenkind::Rparen, literal: String::from(")") },
-            Token { kind: Tokenkind::Lbrace, literal: String::from("{") },
-            Token { kind: Tokenkind::Rbrace, literal: String::from("}") },
-            Token { kind: Tokenkind::Semicolon, literal: String::from(";") },
-            Token::new(Tokenkind::Eof, String::from("")), // Eof token
+            Token::new (Tokenkind::Assign,String::from("=")),
+            Token::new (Tokenkind::Plus, String::from("+")),
+            Token::new (Tokenkind::Lparen, String::from("(")),
+            Token::new (Tokenkind::Rparen, String::from(")")),
+            Token::new (Tokenkind::Lbrace, String::from("{")),
+            Token::new (Tokenkind::Rbrace, String::from("}")),
+            Token::new(Tokenkind::Comma, String::from(",")),
+            Token::new (Tokenkind::Semicolon,String::from(";")),
+            Token::new(Tokenkind::Eof, String::new()), // Eof token
         ];
         let mut lexer = Lexer::new(input);
-        let mut tokens = Vec::new();
-        while let token = lexer.next_token() {
-            if token.kind == Tokenkind::Eof {
-                break;
-            }
-            tokens.push(token);
-        }
-        assert_eq!(tokens.len(), expect_token.len());
-        for (i, token) in tokens.iter().enumerate() {
-            assert_eq!(token.kind, expect_token[i].kind);
-            assert_eq!(token.literal, expect_token[i].literal);
+        for (idx,exp_token) in expect_token.iter().enumerate() {
+            let recv_token = lexer.next_token();
+            assert_eq!(exp_token.kind,recv_token.kind,
+                "fail to read token at {} expected token {}  found {}",idx,exp_token.kind,recv_token.kind);
+            assert_eq!(exp_token.literal,recv_token.literal,
+                "fail to read token at {} expectec token {}  found {}",idx,exp_token.literal,recv_token.literal);  // Move to the next character
         }
     }
 }
