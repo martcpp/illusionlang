@@ -8,4 +8,5 @@ fn main() {
         literal: String::from("example"),
     };
     println!("Token kind: {:?}, literal: {}", token.kind, token.literal);
+    println!("Token {:?}", token);
 }
