@@ -1,19 +1,37 @@
 use super::tokenizer::{Token,Tokenkind};
 
+#[derive(Debug)]
 pub struct Lexer {
-    input: Vec<char>,
-    current: usize,
-    next: usize,
-    ch: char,
+    pub input: Vec<char>,
+    pub current: usize,
+    pub next: usize,
+    pub ch: char,
 }
 
 impl Lexer {
     pub fn new(input:&str) -> Lexer{
-        todo!("Lexer::new not implemented");
+        let mut lex = Lexer {
+            input: input.chars().collect(),
+            current: 0,
+            next: 0,
+            ch: '\0',
+        };
+        lex.read_token();
+        lex
     }
-    pub fn read_token(&mut self) -> Token {
-        todo!("Lexer::read_token not implemented");
+
+    pub fn read_token(&mut self){
+        let current_pos = self.next;
+        if self.current >= self.input.len() {
+            self.ch = '\0'; // End of input
+        }else{
+            self.ch = self.input[current_pos];
+            self.current = current_pos;
+            self.next += 1;
+
+        }
     }
+
     pub fn next_token(&mut self) -> Token {
         todo!("Lexer::next_token not implemented");
     }
