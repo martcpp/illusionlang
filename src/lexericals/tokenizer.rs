@@ -7,6 +7,13 @@ pub struct Token{
     pub literal: String,
 }
 
+impl Token {
+    pub fn new(kind: Tokenkind, literal: String) -> Self {
+        Self { kind, literal }
+    }
+    
+}
+
 #[allow(dead_code, unused_variables)]
 #[derive(Debug)]
 pub enum Tokenkind {
