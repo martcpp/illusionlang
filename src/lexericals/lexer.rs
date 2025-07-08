@@ -33,7 +33,49 @@ impl Lexer {
     }
 
     pub fn next_token(&mut self) -> Token {
-        todo!("Lexer::next_token not implemented");
+        let mut tok = Token::new(Tokenkind::Illegal, String::new());
+
+        match self.ch {
+            '=' => {
+                tok.kind = Tokenkind::Assign;
+                tok.literal = String::from("=");
+            },
+            '+' => {
+                tok.kind = Tokenkind::Plus;
+                tok.literal = String::from("+");
+            },
+            '(' => {
+                tok.kind = Tokenkind::Lparen;
+                tok.literal = String::from("(");
+            },
+            ')' => {
+                tok.kind = Tokenkind::Rparen;
+                tok.literal = String::from(")");
+            },
+            '{' => {
+                tok.kind = Tokenkind::Lbrace;
+                tok.literal = String::from("{");
+            },
+            '}' => {
+                tok.kind = Tokenkind::Rbrace;
+                tok.literal = String::from("}");
+            },
+            ';' => {
+                tok.kind = Tokenkind::Semicolon;
+                tok.literal = String::from(";");
+            },
+            _ => {
+                tok.kind = Tokenkind::Illegal;
+                tok.literal = self.ch.to_string();
+            }
+        }
+
+        self.read_token();
+        if self.ch == '\0' {
+            return Token::new(Tokenkind::Eof, String::new());
+        }
+        
+        tok
     }
     
 }
