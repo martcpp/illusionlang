@@ -22,6 +22,6 @@ fn main() {
     }
 
     // println!(" last Current character: {:?}", lexer.next_token());
-
     
 }
+

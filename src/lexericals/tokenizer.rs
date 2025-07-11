@@ -83,7 +83,18 @@ impl Display for Tokenkind {
     }
 }
 
-
+impl Tokenkind{
+    pub fn lookup_ident(ident: &String) -> Self{
+        match ident as &str {
+            "fn" => Self::Function,
+            "let" => Self::Let,
+            "if" => Self::If,
+            "else" => Self::Else,
+            "return" => Self::Return,
+            _ => Self::Ident,
+        }
+    }
+}
 
 #[cfg(test)]
 mod test{
@@ -109,4 +120,6 @@ mod test{
         let token_kind = Tokenkind::Eof;
         assert_eq!(token_kind.to_string(), "Eof");
    }
+
+   
 }

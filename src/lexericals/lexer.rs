@@ -70,9 +70,9 @@ mod test {
             Token::new (Tokenkind::Rparen, String::from(")")),
             Token::new (Tokenkind::Lbrace, String::from("{")),
             Token::new (Tokenkind::Rbrace, String::from("}")),
-            Token::new(Tokenkind::Comma, String::from(",")),
+            Token::new (Tokenkind::Comma, String::from(",")),
             Token::new (Tokenkind::Semicolon,String::from(";")),
-            Token::new(Tokenkind::Eof, String::new()), // Eof token
+            Token::new (Tokenkind::Eof, String::new()), // Eof token
         ];
         let mut lexer = Lexer::new(input);
         for (idx,exp_token) in expect_token.iter().enumerate() {
