@@ -1,4 +1,4 @@
-use super::tokenizer::{Token,Tokenkind};
+use crate::lexericals::tokenizer::{Token,Tokenkind};
 
 #[derive(Debug)]
 pub struct Lexer {
@@ -45,13 +45,30 @@ impl Lexer {
             ';' => Token::new(Tokenkind::Semicolon, self.ch.to_string()),
             '\0' => Token::new(Tokenkind::Eof, String::new()), // End of file token
 
-            _ => Token::new(Tokenkind::Illegal, self.ch.to_string()),
-
+            _ => return if Lexer::is_letter(self.ch){
+                let literal = self.read_identifier();
+                let kind = Tokenkind::lookup_ident(&literal);
+                Token::new(kind, literal)
+            } else {
+                Token::new(Tokenkind::Illegal, self.ch.to_string())
+            },
 
         
         };
         self.read_token(); // Move to the next character
         token
+    }
+    fn is_letter(ch: char) -> bool {
+        ch.is_alphabetic() || ch == '_'
+    }
+
+    fn read_identifier(&mut self) -> String {
+        let mut literal =  String::new();
+        while Lexer::is_letter(self.ch){
+            literal.push(self.ch);
+            self.read_token();
+        }
+        literal
     }
   
     
@@ -62,7 +79,14 @@ mod test {
     use super::*;
     #[test]
     fn read_token() {
-        let input ="=+(){},;";
+        let input =r#"let five = 5;
+        let ten = 10;
+        let add = fn(x, y) {
+            x + y;
+        };
+        let result = add(five, ten);
+        "#;
+
         let expect_token = vec![
             Token::new (Tokenkind::Assign,String::from("=")),
             Token::new (Tokenkind::Plus, String::from("+")),
