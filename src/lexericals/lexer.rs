@@ -33,6 +33,7 @@ impl Lexer {
 
     pub fn next_token(&mut self) -> Token {
             //"=+(){},;";
+        self.skip_whitespace(); // Skip whitespace characters
         let token = match self.ch {
             '=' => Token::new(Tokenkind::Assign, self.ch.to_string()),
             '+' => Token::new(Tokenkind::Plus, self.ch.to_string()),
@@ -49,6 +50,11 @@ impl Lexer {
                 let literal = self.read_identifier();
                 let kind = Tokenkind::lookup_ident(&literal);
                 Token::new(kind, literal)
+            }else if Lexer::is_digit(self.ch) {
+                let kind = Tokenkind::Int;
+                let literal = self.read_number();
+                Token::new(kind, literal)
+
             } else {
                 Token::new(Tokenkind::Illegal, self.ch.to_string())
             },
@@ -58,8 +64,28 @@ impl Lexer {
         self.read_token(); // Move to the next character
         token
     }
+
+    fn skip_whitespace(&mut self) {
+        while self.ch.is_whitespace() {
+            self.read_token();
+        }
+    }
+
+    fn is_digit(ch: char) -> bool {
+        ch.is_numeric()
+    }
+
     fn is_letter(ch: char) -> bool {
         ch.is_alphabetic() || ch == '_'
+    }
+
+    fn read_number(&mut self) -> String {
+        let mut literal = String::new();
+        while Lexer::is_digit(self.ch) {
+            literal.push(self.ch);
+            self.read_token();
+        }
+        literal
     }
 
     fn read_identifier(&mut self) -> String {
@@ -79,7 +105,8 @@ mod test {
     use super::*;
     #[test]
     fn read_token() {
-        let input =r#"let five = 5;
+        let input =r#"
+        let five = 5;
         let ten = 10;
         let add = fn(x, y) {
             x + y;
