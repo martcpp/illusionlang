@@ -51,11 +51,21 @@ impl Lexer {
                 let kind = Tokenkind::lookup_ident(&literal);
                 Token::new(kind, literal)
             }else if Lexer::is_digit(self.ch) {
-                let kind = Tokenkind::Int;
                 let literal = self.read_number();
+                let kind = if literal.contains('.') {
+                    Tokenkind::Float // If it contains a dot, treat it as a float
+                } else {
+                    Tokenkind::Int // Otherwise, treat it as an integer
+                };
                 Token::new(kind, literal)
 
-            } else {
+            }
+            //else if Lexer::is_float(self.ch){
+            //     let kind = Tokenkind::Float;
+            //     let literal = self.read_float();
+            //     Token::new(kind, literal)
+            // }
+            else {
                 Token::new(Tokenkind::Illegal, self.ch.to_string())
             },
 
@@ -79,14 +89,39 @@ impl Lexer {
         ch.is_alphabetic() || ch == '_'
     }
 
+    // fn is_float(ch: char) -> bool {
+    //     ch.is_numeric() || ch == '.'
+    // }
+
     fn read_number(&mut self) -> String {
         let mut literal = String::new();
         while Lexer::is_digit(self.ch) {
             literal.push(self.ch);
             self.read_token();
         }
+        if self.ch == '.' {
+            literal.push(self.ch);
+            self.read_token();
+        }
+        while Lexer::is_digit(self.ch) {
+            literal.push(self.ch);
+            self.read_token();
+        }
         literal
     }
+
+    // fn read_float(&mut self) -> String {
+    //     let mut literal = String::new();
+    //     if self.ch == '.' {
+    //         literal.push(self.ch);
+    //         self.read_token();
+    //     }
+    //     while Lexer::is_float(self.ch) {
+    //         literal.push(self.ch);
+    //         self.read_token();
+    //     }
+    //     literal
+    // }
 
     fn read_identifier(&mut self) -> String {
         let mut literal =  String::new();
@@ -106,7 +141,8 @@ mod test {
     #[test]
     fn read_token() {
         let input =r#"
-        let five = 5;
+        let five = 5000000;
+        let floattest = 5.0;
         let ten = 10;
         let add = fn(x, y) {
             x + y;
@@ -118,13 +154,23 @@ mod test {
             Token::new(Tokenkind::Let, String::from("let")),
             Token::new(Tokenkind::Ident, String::from("five")),
             Token::new(Tokenkind::Assign, String::from("=")),
-            Token::new(Tokenkind::Int, String::from("5")),
+            Token::new(Tokenkind::Int, String::from("5000000")),
+            Token::new(Tokenkind::Semicolon, String::from(";")),
+            Token::new(Tokenkind::Let, String::from("let")),
+            Token::new(Tokenkind::Ident, String::from("floattest")),
+            Token::new(Tokenkind::Assign, String::from("=")),
+            Token::new(Tokenkind::Float, String::from("5.0")),
             Token::new(Tokenkind::Semicolon, String::from(";")),
             Token::new(Tokenkind::Let, String::from("let")),
             Token::new(Tokenkind::Ident, String::from("ten")),
             Token::new(Tokenkind::Assign, String::from("=")),
             Token::new(Tokenkind::Int, String::from("10")),
             Token::new(Tokenkind::Semicolon, String::from(";")),
+            // Token::new(Tokenkind::Let, String::from("let")),
+            // Token::new(Tokenkind::Ident, String::from("ten")),
+            // Token::new(Tokenkind::Assign, String::from("=")),
+            // Token::new(Tokenkind::Int, String::from("10")),
+            // Token::new(Tokenkind::Semicolon, String::from(";")),
             Token::new(Tokenkind::Let, String::from("let")),
             Token::new(Tokenkind::Ident, String::from("add")),
             Token::new(Tokenkind::Assign, String::from("=")),
