@@ -1,4 +1,4 @@
-use crate::lexericals::tokenizer::{Token,Tokenkind};
+use crate::lexericals::tokenizer::{Token, Tokenkind};
 
 #[derive(Debug)]
 pub struct Lexer {
@@ -9,7 +9,7 @@ pub struct Lexer {
 }
 
 impl Lexer {
-    pub fn new(input:&str) -> Lexer{
+    pub fn new(input: &str) -> Lexer {
         let mut lex = Lexer {
             input: input.chars().collect(),
             current: 0,
@@ -20,19 +20,19 @@ impl Lexer {
         lex
     }
 
-    pub fn read_token(&mut self){
+    pub fn read_token(&mut self) {
         let current_pos = self.next;
         if current_pos >= self.input.len() {
             self.ch = '\0'; // End of input
-        }else{
-            self.ch = self.input[current_pos];          
+        } else {
+            self.ch = self.input[current_pos];
         }
         self.current = current_pos;
         self.next += 1;
     }
 
     pub fn next_token(&mut self) -> Token {
-            //"=+(){},;";
+        //"=+(){},;";
         self.skip_whitespace(); // Skip whitespace characters
         let token = match self.ch {
             '=' => Token::new(Tokenkind::Assign, self.ch.to_string()),
@@ -46,30 +46,23 @@ impl Lexer {
             ';' => Token::new(Tokenkind::Semicolon, self.ch.to_string()),
             '\0' => Token::new(Tokenkind::Eof, String::new()), // End of file token
 
-            _ => return if Lexer::is_letter(self.ch){
-                let literal = self.read_identifier();
-                let kind = Tokenkind::lookup_ident(&literal);
-                Token::new(kind, literal)
-            }else if Lexer::is_digit(self.ch) {
-                let literal = self.read_number();
-                let kind = if literal.contains('.') {
-                    Tokenkind::Float // If it contains a dot, treat it as a float
+            _ => {
+                return if Lexer::is_letter(self.ch) {
+                    let literal = self.read_identifier();
+                    let kind = Tokenkind::lookup_ident(&literal);
+                    Token::new(kind, literal)
+                } else if Lexer::is_digit(self.ch) {
+                    let literal = self.read_number();
+                    let kind = if literal.contains('.') {
+                        Tokenkind::Float // If it contains a dot, treat it as a float
+                    } else {
+                        Tokenkind::Int // Otherwise, treat it as an integer
+                    };
+                    Token::new(kind, literal)
                 } else {
-                    Tokenkind::Int // Otherwise, treat it as an integer
+                    Token::new(Tokenkind::Illegal, self.ch.to_string())
                 };
-                Token::new(kind, literal)
-
             }
-            //else if Lexer::is_float(self.ch){
-            //     let kind = Tokenkind::Float;
-            //     let literal = self.read_float();
-            //     Token::new(kind, literal)
-            // }
-            else {
-                Token::new(Tokenkind::Illegal, self.ch.to_string())
-            },
-
-        
         };
         self.read_token(); // Move to the next character
         token
@@ -88,17 +81,15 @@ impl Lexer {
     fn is_letter(ch: char) -> bool {
         ch.is_alphabetic() || ch == '_'
     }
-
-    // fn is_float(ch: char) -> bool {
-    //     ch.is_numeric() || ch == '.'
-    // }
-
     fn read_number(&mut self) -> String {
         let mut literal = String::new();
         while Lexer::is_digit(self.ch) {
             literal.push(self.ch);
             self.read_token();
         }
+
+        // Check for a decimal point to handle floats
+        // If the next character is a dot, we treat it as a float
         if self.ch == '.' {
             literal.push(self.ch);
             self.read_token();
@@ -110,29 +101,14 @@ impl Lexer {
         literal
     }
 
-    // fn read_float(&mut self) -> String {
-    //     let mut literal = String::new();
-    //     if self.ch == '.' {
-    //         literal.push(self.ch);
-    //         self.read_token();
-    //     }
-    //     while Lexer::is_float(self.ch) {
-    //         literal.push(self.ch);
-    //         self.read_token();
-    //     }
-    //     literal
-    // }
-
     fn read_identifier(&mut self) -> String {
-        let mut literal =  String::new();
-        while Lexer::is_letter(self.ch){
+        let mut literal = String::new();
+        while Lexer::is_letter(self.ch) {
             literal.push(self.ch);
             self.read_token();
         }
         literal
     }
-  
-    
 }
 
 #[cfg(test)]
@@ -140,7 +116,7 @@ mod test {
     use super::*;
     #[test]
     fn read_token() {
-        let input =r#"
+        let input = r#"
         let five = 5000000;
         let floattest = 5.0;
         let ten = 10;
@@ -166,11 +142,6 @@ mod test {
             Token::new(Tokenkind::Assign, String::from("=")),
             Token::new(Tokenkind::Int, String::from("10")),
             Token::new(Tokenkind::Semicolon, String::from(";")),
-            // Token::new(Tokenkind::Let, String::from("let")),
-            // Token::new(Tokenkind::Ident, String::from("ten")),
-            // Token::new(Tokenkind::Assign, String::from("=")),
-            // Token::new(Tokenkind::Int, String::from("10")),
-            // Token::new(Tokenkind::Semicolon, String::from(";")),
             Token::new(Tokenkind::Let, String::from("let")),
             Token::new(Tokenkind::Ident, String::from("add")),
             Token::new(Tokenkind::Assign, String::from("=")),
@@ -200,12 +171,18 @@ mod test {
             Token::new(Tokenkind::Eof, String::new()),
         ];
         let mut lexer = Lexer::new(input);
-        for (idx,exp_token) in expect_token.iter().enumerate() {
+        for (idx, exp_token) in expect_token.iter().enumerate() {
             let recv_token = lexer.next_token();
-            assert_eq!(exp_token.kind,recv_token.kind,
-                "fail to read token at {} expected token {}  found {}",idx,exp_token.kind,recv_token.kind);
-            assert_eq!(exp_token.literal,recv_token.literal,
-                "fail to read token at {} expectec token {}  found {}",idx,exp_token.literal,recv_token.literal);  // Move to the next character
+            assert_eq!(
+                exp_token.kind, recv_token.kind,
+                "fail to read token at {} expected token {}  found {}",
+                idx, exp_token.kind, recv_token.kind
+            );
+            assert_eq!(
+                exp_token.literal, recv_token.literal,
+                "fail to read token at {} expectec token {}  found {}",
+                idx, exp_token.literal, recv_token.literal
+            ); // Move to the next character
         }
     }
 }
