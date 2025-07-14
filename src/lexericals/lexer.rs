@@ -35,7 +35,14 @@ impl Lexer {
         //"=+(){},;";
         self.skip_whitespace(); // Skip whitespace characters
         let token = match self.ch {
-            '=' => Token::new(Tokenkind::Assign, self.ch.to_string()),
+            '=' => {
+                self.read_token(); // Read the next character to check for '=='
+                if self.ch == '=' {
+                    Token::new(Tokenkind::Eq, "==".to_string())
+                }else {
+                    Token::new(Tokenkind::Assign, "=".to_string())
+                }
+            },
             '+' => Token::new(Tokenkind::Plus, self.ch.to_string()),
             '-' => Token::new(Tokenkind::Minus, self.ch.to_string()),
             ',' => Token::new(Tokenkind::Comma, self.ch.to_string()),
@@ -44,6 +51,27 @@ impl Lexer {
             '}' => Token::new(Tokenkind::Rbrace, self.ch.to_string()),
             '{' => Token::new(Tokenkind::Lbrace, self.ch.to_string()),
             ';' => Token::new(Tokenkind::Semicolon, self.ch.to_string()),
+            '!' => {
+                self.read_token(); // Read the next character to check for '!='
+                if self.ch == '=' {
+                    Token::new(Tokenkind::NotEq, "!=".to_string())
+                } else {
+                    Token::new(Tokenkind::Bang, "!".to_string())
+                }
+            }
+            '*' => Token::new(Tokenkind::Asterisk, self.ch.to_string()),
+            '/' => Token::new(Tokenkind::Slash, self.ch.to_string()),
+            '%' => Token::new(Tokenkind::Pencentage, self.ch.to_string()),
+            '<' => Token::new(Tokenkind::Lthan, self.ch.to_string()),
+            '>' => Token::new(Tokenkind::Gthan, self.ch.to_string()),
+            '&' => {
+                self.read_token(); // Read the next character to check for '&&'
+                if self.ch == '&' {
+                    Token::new(Tokenkind::And, "&&".to_string())
+                } else {
+                    Token::new(Tokenkind::Illegal, "&".to_string())
+                }
+            }
             '\0' => Token::new(Tokenkind::Eof, String::new()), // End of file token
 
             _ => {
@@ -124,6 +152,7 @@ mod test {
             x + y;
         };
         let result = add(five, ten);
+        ==
         "#;
 
         let expect_token = vec![
@@ -168,6 +197,7 @@ mod test {
             Token::new(Tokenkind::Ident, String::from("ten")),
             Token::new(Tokenkind::Rparen, String::from(")")),
             Token::new(Tokenkind::Semicolon, String::from(";")),
+            Token::new(Tokenkind::Eq, String::from("==")),
             Token::new(Tokenkind::Eof, String::new()),
         ];
         let mut lexer = Lexer::new(input);

@@ -18,6 +18,7 @@ fn main() {
             x + y;
         };
         let result = add(five, ten);
+        ==
         "#;
 
     let mut lexer = Lexer::new(input);
@@ -109,6 +110,7 @@ fn read() -> Vec<Token> {
         Token::new(Tokenkind::Ident, String::from("ten")),
         Token::new(Tokenkind::Rparen, String::from(")")),
         Token::new(Tokenkind::Semicolon, String::from(";")),
+        Token::new(Tokenkind::Eq, String::from("==")),
         Token::new(Tokenkind::Eof, String::new()),
     ];
     expected_token

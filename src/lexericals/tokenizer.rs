@@ -16,28 +16,42 @@ impl Token {
 #[allow(dead_code, unused_variables)]
 #[derive(Debug, PartialEq)]
 pub enum Tokenkind {
+    // Illegal and End of File and identifiers
     Illegal,
     Eof,
     Ident,
+    
+
+    // Types
     Int,
     Float,
     String,
-    Assign,
+    Char,
+
+    // mathematical Operators
     Plus,
     Minus,
-    Bang,
     Asterisk,
     Slash,
+    Pencentage,
+
+    // special Characters
     Comma,
     Semicolon,
     Lparen,
     Rparen,
     Lbrace,
     Rbrace,
+    Assign,
+
+    // comparison Operators
     Eq,
     NotEq,
     Lthan,
     Gthan,
+    OR,
+    And,
+    Bang,
 
     // Keywords
     Function,
@@ -50,29 +64,45 @@ pub enum Tokenkind {
 impl Display for Tokenkind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            // Illegal and End of File and identifiers
             Tokenkind::Illegal => write!(f, "Illegal"),
             Tokenkind::Eof => write!(f, "Eof"),
             Tokenkind::Ident => write!(f, "Ident"),
+            
+
+            // Types
             Tokenkind::Int => write!(f, "Int"),
             Tokenkind::Float => write!(f, "Float"),
             Tokenkind::String => write!(f, "String"),
-            Tokenkind::Assign => write!(f, "Assign"),
+            Tokenkind::Char => write!(f, "Char"),
+
+            
+
+            // mathematical Operators
             Tokenkind::Plus => write!(f, "Plus"),
             Tokenkind::Minus => write!(f, "Minus"),
-            Tokenkind::Bang => write!(f, "Bang"),
             Tokenkind::Asterisk => write!(f, "Asterisk"),
             Tokenkind::Slash => write!(f, "Slash"),
+            Tokenkind::Pencentage => write!(f, "Percentage"),
+
+            // special Characters
             Tokenkind::Comma => write!(f, "Comma"),
             Tokenkind::Semicolon => write!(f, "Semicolon"),
             Tokenkind::Lparen => write!(f, "Lparen"),
             Tokenkind::Rparen => write!(f, "Rparen"),
             Tokenkind::Lbrace => write!(f, "Lbrace"),
             Tokenkind::Rbrace => write!(f, "Rbrace"),
+            Tokenkind::Assign => write!(f, "Assign"),
+
+            // equality Operators
             Tokenkind::Eq => write!(f, "Eq"),
             Tokenkind::NotEq => write!(f, "NotEq"),
             Tokenkind::Lthan => write!(f, "Lthan"),
             Tokenkind::Gthan => write!(f, "Gthan"),
-
+            Tokenkind::OR => write!(f, "OR"),
+            Tokenkind::And => write!(f, "And"),
+            Tokenkind::Bang => write!(f, "Bang"),
+            
             // Keywords
             Tokenkind::Function => write!(f, "Function"),
             Tokenkind::Let => write!(f, "Let"),
@@ -85,7 +115,7 @@ impl Display for Tokenkind {
 
 impl Tokenkind {
     pub fn lookup_ident(ident: &str) -> Self {
-        match ident as &str {
+        match ident{
             "fn" => Self::Function,
             "let" => Self::Let,
             "if" => Self::If,
