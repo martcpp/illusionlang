@@ -175,7 +175,7 @@ mod test {
             x + y;
         };
         let result = add(five, ten);
-        ==
+        == True; False;
         "#;
 
         let expect_token = vec![
@@ -221,6 +221,10 @@ mod test {
             Token::new(Tokenkind::Rparen, String::from(")")),
             Token::new(Tokenkind::Semicolon, String::from(";")),
             Token::new(Tokenkind::Eq, String::from("==")),
+            Token::new(Tokenkind::Bool, String::from("True")),
+            Token::new(Tokenkind::Semicolon, String::from(";")),
+            Token::new(Tokenkind::Bool, String::from("False")),
+            Token::new(Tokenkind::Semicolon, String::from(";")),
             Token::new(Tokenkind::Eof, String::new()),
         ];
         let mut lexer = Lexer::new(input);

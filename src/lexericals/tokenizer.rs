@@ -27,6 +27,7 @@ pub enum Tokenkind {
     Float,
     String,
     Char,
+    Bool,
 
     // mathematical Operators
     Plus,
@@ -77,6 +78,7 @@ impl Display for Tokenkind {
             Tokenkind::Float => write!(f, "Float"),
             Tokenkind::String => write!(f, "String"),
             Tokenkind::Char => write!(f, "Char"),
+            Tokenkind::Bool => write!(f, "Bool"),
 
             
 
@@ -125,6 +127,8 @@ impl Tokenkind {
             "if" => Self::If,
             "else" => Self::Else,
             "return" => Self::Return,
+            "True" => Self::Bool,
+            "False" => Self::Bool,
             _ => Self::Ident,
         }
     }
