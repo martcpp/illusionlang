@@ -3,7 +3,7 @@ use crate::lexericals::tokenizer::{Token, Tokenkind};
 #[derive(Debug)]
 pub struct Lexer {
     pub input: Vec<char>,
-    pub current: usize,
+   // pub current: usize,
     pub next: usize,
     pub ch: char,
 }
@@ -12,7 +12,7 @@ impl Lexer {
     pub fn new(input: &str) -> Lexer {
         let mut lex = Lexer {
             input: input.chars().collect(),
-            current: 0,
+            //current: 0,
             next: 0,
             ch: '\0',
         };
@@ -27,7 +27,7 @@ impl Lexer {
         } else {
             self.ch = self.input[current_pos];
         }
-        self.current = current_pos;
+        //self.current = current_pos;
         self.next += 1;
     }
 
