@@ -20,7 +20,6 @@ pub enum Tokenkind {
     Illegal,
     Eof,
     Ident,
-    
 
     // Types
     Int,
@@ -71,7 +70,6 @@ impl Display for Tokenkind {
             Tokenkind::Illegal => write!(f, "Illegal"),
             Tokenkind::Eof => write!(f, "Eof"),
             Tokenkind::Ident => write!(f, "Ident"),
-            
 
             // Types
             Tokenkind::Int => write!(f, "Int"),
@@ -79,8 +77,6 @@ impl Display for Tokenkind {
             Tokenkind::String => write!(f, "String"),
             Tokenkind::Char => write!(f, "Char"),
             Tokenkind::Bool => write!(f, "Bool"),
-
-            
 
             // mathematical Operators
             Tokenkind::Plus => write!(f, "Plus"),
@@ -108,7 +104,7 @@ impl Display for Tokenkind {
             Tokenkind::OR => write!(f, "OR"),
             Tokenkind::And => write!(f, "And"),
             Tokenkind::Bang => write!(f, "Bang"),
-            
+
             // Keywords
             Tokenkind::Function => write!(f, "Function"),
             Tokenkind::Let => write!(f, "Let"),
@@ -121,7 +117,7 @@ impl Display for Tokenkind {
 
 impl Tokenkind {
     pub fn lookup_ident(ident: &str) -> Self {
-        match ident{
+        match ident {
             "fn" => Self::Function,
             "let" => Self::Let,
             "if" => Self::If,

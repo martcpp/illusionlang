@@ -3,7 +3,7 @@ use crate::lexericals::tokenizer::{Token, Tokenkind};
 #[derive(Debug)]
 pub struct Lexer {
     pub input: Vec<char>,
-   // pub current: usize,
+    // pub current: usize,
     pub next: usize,
     pub ch: char,
 }
@@ -39,10 +39,10 @@ impl Lexer {
                 self.read_token(); // Read the next character to check for '=='
                 if self.ch == '=' {
                     Token::new(Tokenkind::Eq, "==".to_string())
-                }else {
+                } else {
                     Token::new(Tokenkind::Assign, "=".to_string())
                 }
-            },
+            }
             '+' => Token::new(Tokenkind::Plus, self.ch.to_string()),
             '-' => Token::new(Tokenkind::Minus, self.ch.to_string()),
             ',' => Token::new(Tokenkind::Comma, self.ch.to_string()),
@@ -66,7 +66,7 @@ impl Lexer {
                 } else {
                     Token::new(Tokenkind::Illegal, "|".to_string())
                 }
-            },
+            }
             '*' => Token::new(Tokenkind::Asterisk, self.ch.to_string()),
             '/' => Token::new(Tokenkind::Slash, self.ch.to_string()),
             '%' => Token::new(Tokenkind::Pencentage, self.ch.to_string()),
@@ -77,16 +77,15 @@ impl Lexer {
                 } else {
                     Token::new(Tokenkind::Lthan, "<".to_string())
                 }
-              
-            },
-            '>' =>{
+            }
+            '>' => {
                 self.read_token(); // Read the next character to check for '>='
                 if self.ch == '=' {
                     Token::new(Tokenkind::Gthanoreq, ">=".to_string())
                 } else {
                     Token::new(Tokenkind::Gthan, ">".to_string())
                 }
-            }, 
+            }
             '&' => {
                 self.read_token(); // Read the next character to check for '&&'
                 if self.ch == '&' {
@@ -257,7 +256,7 @@ mod test {
         let mut lexer = Lexer::new(input);
         let token1 = lexer.next_token();
         assert_eq!(token1.kind, Tokenkind::Int);
-        assert_eq!(token1.literal, "12345");   
+        assert_eq!(token1.literal, "12345");
     }
     #[test]
     fn test_read_float() {
@@ -294,7 +293,6 @@ mod test {
         let token5 = lexer.next_token();
         assert_eq!(token5.kind, Tokenkind::Return);
         assert_eq!(token5.literal, "return");
-
     }
     #[test]
     fn test_read_identifiers() {

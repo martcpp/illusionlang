@@ -1,4 +1,5 @@
 mod lexericals;
+mod parsers;
 mod repl;
 use std::io;
 
@@ -12,9 +13,7 @@ fn main() {
     println!("press ctrl+c to exit the terminal");
     start(io::stdin(), io::stdout());
     //print_tokens();
-
 }
-
 
 fn print_tokens() {
     let mut lexer = Lexer::new(read_input());
@@ -34,7 +33,6 @@ fn print_tokens() {
     }
 }
 
-
 fn read_input() -> &'static str {
     let input = r#"
         let five = 5000000;
@@ -50,57 +48,54 @@ fn read_input() -> &'static str {
     input
 }
 fn expected_token() -> Vec<Token> {
-
-        let expect_tokens = vec![
-            Token::new(Tokenkind::Let, String::from("let")),
-            Token::new(Tokenkind::Ident, String::from("five")),
-            Token::new(Tokenkind::Assign, String::from("=")),
-            Token::new(Tokenkind::Int, String::from("5000000")),
-            Token::new(Tokenkind::Semicolon, String::from(";")),
-            Token::new(Tokenkind::Let, String::from("let")),
-            Token::new(Tokenkind::Ident, String::from("floattest")),
-            Token::new(Tokenkind::Assign, String::from("=")),
-            Token::new(Tokenkind::Float, String::from("5.0")),
-            Token::new(Tokenkind::Semicolon, String::from(";")),
-            Token::new(Tokenkind::Let, String::from("let")),
-            Token::new(Tokenkind::Ident, String::from("ten")),
-            Token::new(Tokenkind::Assign, String::from("=")),
-            Token::new(Tokenkind::Int, String::from("10")),
-            Token::new(Tokenkind::Semicolon, String::from(";")),
-            Token::new(Tokenkind::Let, String::from("let")),
-            Token::new(Tokenkind::Ident, String::from("add")),
-            Token::new(Tokenkind::Assign, String::from("=")),
-            Token::new(Tokenkind::Function, String::from("fn")),
-            Token::new(Tokenkind::Lparen, String::from("(")),
-            Token::new(Tokenkind::Ident, String::from("x")),
-            Token::new(Tokenkind::Comma, String::from(",")),
-            Token::new(Tokenkind::Ident, String::from("y")),
-            Token::new(Tokenkind::Rparen, String::from(")")),
-            Token::new(Tokenkind::Lbrace, String::from("{")),
-            Token::new(Tokenkind::Ident, String::from("x")),
-            Token::new(Tokenkind::Plus, String::from("+")),
-            Token::new(Tokenkind::Ident, String::from("y")),
-            Token::new(Tokenkind::Semicolon, String::from(";")),
-            Token::new(Tokenkind::Rbrace, String::from("}")),
-            Token::new(Tokenkind::Semicolon, String::from(";")),
-            Token::new(Tokenkind::Let, String::from("let")),
-            Token::new(Tokenkind::Ident, String::from("result")),
-            Token::new(Tokenkind::Assign, String::from("=")),
-            Token::new(Tokenkind::Ident, String::from("add")),
-            Token::new(Tokenkind::Lparen, String::from("(")),
-            Token::new(Tokenkind::Ident, String::from("five")),
-            Token::new(Tokenkind::Comma, String::from(",")),
-            Token::new(Tokenkind::Ident, String::from("ten")),
-            Token::new(Tokenkind::Rparen, String::from(")")),
-            Token::new(Tokenkind::Semicolon, String::from(";")),
-            Token::new(Tokenkind::Eq, String::from("==")),
-            Token::new(Tokenkind::Bool, String::from("True")),
-            Token::new(Tokenkind::Semicolon, String::from(";")),
-            Token::new(Tokenkind::Bool, String::from("False")),
-            Token::new(Tokenkind::Semicolon, String::from(";")),
-            Token::new(Tokenkind::Eof, String::new()),
-        ];
+    let expect_tokens = vec![
+        Token::new(Tokenkind::Let, String::from("let")),
+        Token::new(Tokenkind::Ident, String::from("five")),
+        Token::new(Tokenkind::Assign, String::from("=")),
+        Token::new(Tokenkind::Int, String::from("5000000")),
+        Token::new(Tokenkind::Semicolon, String::from(";")),
+        Token::new(Tokenkind::Let, String::from("let")),
+        Token::new(Tokenkind::Ident, String::from("floattest")),
+        Token::new(Tokenkind::Assign, String::from("=")),
+        Token::new(Tokenkind::Float, String::from("5.0")),
+        Token::new(Tokenkind::Semicolon, String::from(";")),
+        Token::new(Tokenkind::Let, String::from("let")),
+        Token::new(Tokenkind::Ident, String::from("ten")),
+        Token::new(Tokenkind::Assign, String::from("=")),
+        Token::new(Tokenkind::Int, String::from("10")),
+        Token::new(Tokenkind::Semicolon, String::from(";")),
+        Token::new(Tokenkind::Let, String::from("let")),
+        Token::new(Tokenkind::Ident, String::from("add")),
+        Token::new(Tokenkind::Assign, String::from("=")),
+        Token::new(Tokenkind::Function, String::from("fn")),
+        Token::new(Tokenkind::Lparen, String::from("(")),
+        Token::new(Tokenkind::Ident, String::from("x")),
+        Token::new(Tokenkind::Comma, String::from(",")),
+        Token::new(Tokenkind::Ident, String::from("y")),
+        Token::new(Tokenkind::Rparen, String::from(")")),
+        Token::new(Tokenkind::Lbrace, String::from("{")),
+        Token::new(Tokenkind::Ident, String::from("x")),
+        Token::new(Tokenkind::Plus, String::from("+")),
+        Token::new(Tokenkind::Ident, String::from("y")),
+        Token::new(Tokenkind::Semicolon, String::from(";")),
+        Token::new(Tokenkind::Rbrace, String::from("}")),
+        Token::new(Tokenkind::Semicolon, String::from(";")),
+        Token::new(Tokenkind::Let, String::from("let")),
+        Token::new(Tokenkind::Ident, String::from("result")),
+        Token::new(Tokenkind::Assign, String::from("=")),
+        Token::new(Tokenkind::Ident, String::from("add")),
+        Token::new(Tokenkind::Lparen, String::from("(")),
+        Token::new(Tokenkind::Ident, String::from("five")),
+        Token::new(Tokenkind::Comma, String::from(",")),
+        Token::new(Tokenkind::Ident, String::from("ten")),
+        Token::new(Tokenkind::Rparen, String::from(")")),
+        Token::new(Tokenkind::Semicolon, String::from(";")),
+        Token::new(Tokenkind::Eq, String::from("==")),
+        Token::new(Tokenkind::Bool, String::from("True")),
+        Token::new(Tokenkind::Semicolon, String::from(";")),
+        Token::new(Tokenkind::Bool, String::from("False")),
+        Token::new(Tokenkind::Semicolon, String::from(";")),
+        Token::new(Tokenkind::Eof, String::new()),
+    ];
     expect_tokens
 }
-
-

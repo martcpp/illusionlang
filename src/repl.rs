@@ -1,17 +1,17 @@
-use std::io::{Stdout,Stdin,Write};
+use std::io::{Stdin, Stdout, Write};
 
 use crate::lexericals::{lexer::Lexer, tokenizer::Tokenkind};
 
-
 pub fn start(stdin: Stdin, mut stdout: Stdout) {
-    loop{
+    loop {
         write!(stdout, ">>> ").expect("Failed to write >> to stdout");
         stdout.flush().expect("Failed to flush stdout");
 
         let mut input = String::new();
 
         if let Err(e) = stdin.read_line(&mut input) {
-            writeln!(stdout, "Error reading input: {}", e).expect("Failed to write error to stdout");
+            writeln!(stdout, "Error reading input: {}", e)
+                .expect("Failed to write error to stdout");
             stdout.flush().expect("Failed to flush stdout");
             return;
         }
@@ -28,7 +28,6 @@ pub fn start(stdin: Stdin, mut stdout: Stdout) {
         stdout.flush().expect("Failed to flush stdout");
     }
 }
-
 
 // #[cfg(test)]
 // mod tests {
